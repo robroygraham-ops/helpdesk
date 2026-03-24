@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Call Helpdesk</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    height: 100vh;
+    overflow: hidden;
+    background: #1a1a2e;
+    font-family: 'Segoe UI', system-ui, sans-serif;
+  }
+
+  .subtitle {
+    position: fixed;
+    top: 40px;
+    width: 100%;
+    text-align: center;
+    color: #8888aa;
+    font-size: 1.1rem;
+    pointer-events: none;
+    z-index: 1;
+  }
+
+  .taunt {
+    position: fixed;
+    bottom: 50px;
+    width: 100%;
+    text-align: center;
+    color: rgba(230, 57, 70, 0.4);
+    font-size: 1rem;
+    font-style: italic;
+    pointer-events: none;
+    z-index: 1;
+    opacity: 0;
+    transition: opacity 0.3s;
+  }
+
+  /* Invisible hover zones — 4x3 grid covering the viewport */
+  .zones {
+    position: fixed;
+    inset: 0;
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    grid-template-rows: repeat(3, 1fr);
+    z-index: 10;
+  }
+
+  .zone { cursor: pointer; }
+
+  /* The button */
+  .btn {
+    position: fixed;
+    width: 220px;
+    height: 220px;
+    border: none;
+    border-radius: 50%;
+    background:
+      radial-gradient(circle at 38% 28%, rgba(255,255,255,0.45) 0%, transparent 45%),
+      radial-gradient(circle at 60% 72%, rgba(0,0,0,0.35) 0%, transparent 50%),
+      linear-gradient(160deg, #ff5a5f 0%, #d62828 35%, #8b0a1a 100%);
+    color: #fff;
+    font-size: 1.2rem;
+    font-weight: 700;
+    box-shadow:
+      0 14px 0 0 #6d0915,
+      0 16px 4px 0 rgba(0,0,0,0.25),
+      0 20px 40px rgba(230, 57, 70, 0.35),
+      inset 0 -8px 16px rgba(0,0,0,0.3),
+      inset 0 8px 16px rgba(255,255,255,0.12);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    text-shadow: 0 2px 6px rgba(0,0,0,0.5);
+    pointer-events: none;
+    z-index: 5;
+    /* Start centred */
+    top: calc(50% - 110px);
+    left: calc(50% - 110px);
+    transition: top 0.15s ease-out, left 0.15s ease-out;
+  }
+
+  .btn .icon { font-size: 2.6rem; filter: drop-shadow(0 3px 4px rgba(0,0,0,0.35)); }
+
+  /*
+    Each zone hover moves the button to a DIFFERENT zone's area.
+    Zone grid positions (approximate centres):
+    1(12%,17%) 2(37%,17%) 3(62%,17%) 4(87%,17%)
+    5(12%,50%) 6(37%,50%) 7(62%,50%) 8(87%,50%)
+    9(12%,83%) 10(37%,83%) 11(62%,83%) 12(87%,83%)
+  */
+
+  /* Row 1 zones → jump to row 2/3 */
+  .zone:nth-child(1):hover  ~ .btn { top: 70%; left: 70%; }
+  .zone:nth-child(2):hover  ~ .btn { top: 72%; left: 12%; }
+  .zone:nth-child(3):hover  ~ .btn { top: 68%; left: 78%; }
+  .zone:nth-child(4):hover  ~ .btn { top: 75%; left: 25%; }
+
+  /* Row 2 zones → jump to row 1/3 */
+  .zone:nth-child(5):hover  ~ .btn { top: 8%;  left: 72%; }
+  .zone:nth-child(6):hover  ~ .btn { top: 10%; left: 10%; }
+  .zone:nth-child(7):hover  ~ .btn { top: 75%; left: 10%; }
+  .zone:nth-child(8):hover  ~ .btn { top: 8%;  left: 30%; }
+
+  /* Row 3 zones → jump to row 1/2 */
+  .zone:nth-child(9):hover  ~ .btn { top: 12%; left: 60%; }
+  .zone:nth-child(10):hover ~ .btn { top: 40%; left: 75%; }
+  .zone:nth-child(11):hover ~ .btn { top: 10%; left: 15%; }
+  .zone:nth-child(12):hover ~ .btn { top: 35%; left: 8%;  }
+
+  /* Show taunt when any zone is hovered */
+  .zone:hover ~ .taunt { opacity: 1; }
+</style>
+</head>
+<body>
+  <p class="subtitle">Need help? Just click the button.</p>
+
+  <div class="zones">
+    <div class="zone"></div><div class="zone"></div><div class="zone"></div><div class="zone"></div>
+    <div class="zone"></div><div class="zone"></div><div class="zone"></div><div class="zone"></div>
+    <div class="zone"></div><div class="zone"></div><div class="zone"></div><div class="zone"></div>
+  </div>
+
+  <div class="btn">
+    <span class="icon">📞</span>
+    <span class="label">Call Helpdesk</span>
+  </div>
+
+  <p class="taunt">Good luck with that...</p>
+</body>
+</html>
