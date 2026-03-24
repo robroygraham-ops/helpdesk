@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Call Helpdesk</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    height: 100vh;
+    overflow: hidden;
+    background: #1a1a2e;
+    font-family: 'Segoe UI', system-ui, sans-serif;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .subtitle {
+    position: fixed;
+    top: 40px;
+    width: 100%;
+    text-align: center;
+    color: #8888aa;
+    font-size: 1.1rem;
+    letter-spacing: 0.5px;
+    pointer-events: none;
+    transition: opacity 0.4s;
+  }
+
+  #btn-wrap {
+    position: absolute;
+    z-index: 10;
+  }
+
+  /* Elliptical floor shadow */
+  #btn-wrap::after {
+    content: '';
+    position: absolute;
+    bottom: -28px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 180px;
+    height: 36px;
+    border-radius: 50%;
+    background: radial-gradient(ellipse, rgba(0,0,0,0.45) 0%, transparent 70%);
+    pointer-events: none;
+  }
+
+  #btn {
+    position: relative;
+    width: 220px;
+    height: 220px;
+    border: none;
+    border-radius: 50%;
+    background:
+      radial-gradient(circle at 38% 28%, rgba(255,255,255,0.45) 0%, transparent 45%),
+      radial-gradient(circle at 60% 72%, rgba(0,0,0,0.35) 0%, transparent 50%),
+      linear-gradient(160deg, #ff5a5f 0%, #d62828 35%, #8b0a1a 100%);
+    color: #fff;
+    font-size: 1.2rem;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    cursor: pointer;
+    box-shadow:
+      0 14px 0 0 #6d0915,
+      0 16px 4px 0 rgba(0,0,0,0.25),
+      0 20px 40px rgba(230, 57, 70, 0.35),
+      inset 0 -8px 16px rgba(0,0,0,0.3),
+      inset 0 8px 16px rgba(255,255,255,0.12);
+    transition: transform 0.08s ease-out, box-shadow 0.08s ease-out;
+    user-select: none;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    text-shadow: 0 2px 6px rgba(0,0,0,0.5);
+    line-height: 1.3;
+  }
+
+  #btn .icon {
+    font-size: 2.6rem;
+    filter: drop-shadow(0 3px 4px rgba(0,0,0,0.35));
+  }
+
+  /* Outer glow ring */
+  #btn-wrap::before {
+    content: '';
+    position: absolute;
+    top: -18px;
+    left: -18px;
+    width: 256px;
+    height: 256px;
+    border-radius: 50%;
+    border: 3px solid rgba(255,90,95,0.12);
+    box-shadow:
+      0 0 30px rgba(230,57,70,0.08),
+      inset 0 0 30px rgba(230,57,70,0.05);
+    pointer-events: none;
+  }
+
+  #btn:active {
+    transform: translateY(12px);
+    box-shadow:
+      0 2px 0 0 #6d0915,
+      0 3px 3px 0 rgba(0,0,0,0.2),
+      0 6px 20px rgba(230, 57, 70, 0.25),
+      inset 0 -4px 10px rgba(0,0,0,0.25),
+      inset 0 4px 10px rgba(255,255,255,0.08);
+  }
+
+  #taunt {
+    position: fixed;
+    bottom: 50px;
+    width: 100%;
+    text-align: center;
+    color: #e6394688;
+    font-size: 1.05rem;
+    font-style: italic;
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 0.5s;
+  }
+</style>
+</head>
+<body>
+
+<p class="subtitle">Need help? Just click the button.</p>
+
+<div id="btn-wrap">
+  <button id="btn">
+    <span class="icon">📞</span>
+    <span class="label">Call Helpdesk</span>
+  </button>
+</div>
+
+<p id="taunt"></p>
+
+<script>
+const wrap = document.getElementById('btn-wrap');
+const btn = document.getElementById('btn');
+const taunt = document.getElementById('taunt');
+const subtitle = document.querySelector('.subtitle');
+
+let dodgeCount = 0;
+let lastDodge = 0;
+
+const SIZE = 220;
+
+const taunts = [
+  "Almost had it!",
+  "Too slow!",
+  "Try again 😏",
+  "Nope!",
+  "So close!",
+  "Not today!",
+  "Better luck next time!",
+  "You'll never catch me!",
+  "Nice try, champ.",
+  "Have you tried turning it off and on again?",
+  "Ticket denied.",
+  "The helpdesk is on smoko.",
+  "Your call is important to us… not really.",
+  "Error 404: Button not clickable.",
+  "Please hold… forever.",
+];
+
+function randomBetween(min, max) {
+  return Math.random() * (max - min) + min;
+}
+
+function clamp(val, min, max) {
+  return Math.max(min, Math.min(max, val));
+}
+
+function showTaunt() {
+  taunt.textContent = taunts[dodgeCount % taunts.length];
+  taunt.style.opacity = '1';
+  clearTimeout(taunt._timer);
+  taunt._timer = setTimeout(() => { taunt.style.opacity = '0'; }, 1800);
+}
+
+function setPos(x, y) {
+  wrap.style.left = x + 'px';
+  wrap.style.top = y + 'px';
+}
+
+function centreButton() {
+  setPos(
+    window.innerWidth / 2 - SIZE / 2,
+    window.innerHeight / 2 - SIZE / 2
+  );
+}
+centreButton();
+window.addEventListener('resize', centreButton);
+
+function dodge(e) {
+  const now = Date.now();
+  if (now - lastDodge < 80) return;
+  lastDodge = now;
+
+  const rect = wrap.getBoundingClientRect();
+  const cx = rect.left + SIZE / 2;
+  const cy = rect.top + SIZE / 2;
+
+  const dx = cx - e.clientX;
+  const dy = cy - e.clientY;
+  const dist = Math.sqrt(dx * dx + dy * dy);
+
+  if (dist > 200) return;
+
+  const angle = Math.atan2(dy, dx) + randomBetween(-0.6, 0.6);
+  const leap = randomBetween(230, 440);
+
+  let newX = rect.left + Math.cos(angle) * leap;
+  let newY = rect.top + Math.sin(angle) * leap;
+
+  const pad = 20;
+  newX = clamp(newX, pad, window.innerWidth - SIZE - pad);
+  newY = clamp(newY, pad, window.innerHeight - SIZE - pad - 40);
+
+  setPos(newX, newY);
+
+  dodgeCount++;
+  showTaunt();
+
+  if (dodgeCount === 3) subtitle.style.opacity = '0';
+}
+
+document.addEventListener('mousemove', dodge);
+
+btn.addEventListener('touchstart', (e) => {
+  e.preventDefault();
+  const t = e.touches[0];
+  dodge({ clientX: t.clientX, clientY: t.clientY });
+}, { passive: false });
+
+btn.addEventListener('click', () => {
+  btn.querySelector('.label').textContent = 'Just kidding!';
+  btn.querySelector('.icon').textContent = '😎';
+  btn.style.background =
+    'radial-gradient(circle at 38% 28%, rgba(255,255,255,0.45) 0%, transparent 45%),' +
+    'radial-gradient(circle at 60% 72%, rgba(0,0,0,0.35) 0%, transparent 50%),' +
+    'linear-gradient(160deg, #2dd4a8 0%, #2a9d8f 35%, #1a5e55 100%)';
+  btn.style.boxShadow =
+    '0 14px 0 0 #14503a, 0 16px 4px 0 rgba(0,0,0,0.25), 0 20px 40px rgba(42,157,143,0.35),' +
+    'inset 0 -8px 16px rgba(0,0,0,0.3), inset 0 8px 16px rgba(255,255,255,0.12)';
+  setTimeout(() => {
+    btn.querySelector('.label').textContent = 'Call Helpdesk';
+    btn.querySelector('.icon').textContent = '📞';
+    btn.style.background = '';
+    btn.style.boxShadow = '';
+  }, 2000);
+});
+</script>
+</body>
+</html>
